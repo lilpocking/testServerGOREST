@@ -15,7 +15,8 @@ func CreateRouter() (r *mux.Router) {
 
 	//FUNDS
 	//Get
-	r.HandleFunc("/get:{id}", customer.GetCustomerById).Methods("GET")
+	r.HandleFunc("/customers/id:{id:[0-9]+}", customer.GetCustomerById).Methods("GET")
+	r.HandleFunc("/customers", customer.GetCustomers).Methods("GET")
 	return
 }
 
