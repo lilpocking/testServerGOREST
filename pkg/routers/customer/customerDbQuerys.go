@@ -2,40 +2,11 @@ package customer
 
 import (
 	"database/sql"
-	"encoding/json"
+	"fmt"
 	"home/config"
 	"home/pkg/customer"
 	"log"
-	"net/http"
-	"strconv"
-
-	"github.com/gorilla/mux"
-	_ "github.com/mattn/go-sqlite3"
 )
-
-func GetCustomerById(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-
-	//CORS устанавливается в mainRouter.go
-	//w.Header().Set("Access-Control-Allow-Origin", "*") // длы решения проблемы с CORS политикой
-	w.Header().Set("Content-Type", "application/json") // установка типа отправляемого контента
-
-	id, err := strconv.Atoi(vars["id"])
-	if err != nil {
-		log.Println(err)
-	}
-	Customer := getCustomersFromDbById(id)
-
-	json.NewEncoder(w).Encode(Customer) // кодирование структуры в json формат
-}
-
-func GetCustomers(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-
-	customers := getCustomersFromDb()
-
-	json.NewEncoder(w).Encode(customers)
-}
 
 func getCustomersFromDbById(id int) (Customer customer.Customer) {
 
@@ -114,4 +85,55 @@ func getCustomersFromDb() (Customers []customer.Customer) {
 	return
 }
 
-//func for get customer from db
+func addCustomer(cstmer *customer.Customer) error {
+	var db *sql.DB
+	db, err := sql.Open(config.DriverName, config.DbPath)
+	if err != nil {
+		log.Println("sql post error: ", err)
+	}
+	rslt, err := db.Exec(
+		"INSERT INTO customer ("+
+			"FirstName, "+
+			"LastName, "+
+			"Company, "+
+			"Address, "+
+			"City, "+
+			"State, "+
+			"Country, "+
+			"PostalCode, "+
+			"Phone, "+
+			"Fax, "+
+			"Email, "+
+			"SupportRepId"+
+			") VALUES ("+
+			"$1, "+
+			"$2, "+
+			"$3, "+
+			"$4, "+
+			"$5, "+
+			"$6, "+
+			"$7, "+
+			"$8, "+
+			"$9, "+
+			"$10, "+
+			"$11, "+
+			"$12"+
+			");",
+		cstmer.FirstName,
+		cstmer.LastName,
+		cstmer.Company,
+		cstmer.Address,
+		cstmer.City,
+		cstmer.State,
+		cstmer.Country,
+		cstmer.PostalCode,
+		cstmer.Phone,
+		cstmer.Fax,
+		cstmer.Email,
+		cstmer.SupportRepId)
+
+	if err != nil {
+		log.Println("sql post error: ", err, fmt.Sprintf(" rslt: %v\n", rslt))
+	}
+	return err
+}

@@ -16,7 +16,7 @@ func CheckDbFileExist() {
 
 		r, err := db.Exec(
 			"CREATE TABLE customer (" +
-				"CustomerId INT AUTO_INCREMENT PRIMARY KEY, " +
+				"CustomerId INT PRIMARY KEY AUTO_INCREMENT NOT NULL, " +
 				"FirstName TINYTEXT DEFAULT \"\", " +
 				"LastName TINYTEXT DEFAULT \"\", " +
 				"Company TINYTEXT DEFAULT \"\", " +
