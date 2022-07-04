@@ -14,8 +14,6 @@ import (
 func GetCustomerById(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
-	//CORS устанавливается в mainRouter.go
-	//w.Header().Set("Access-Control-Allow-Origin", "*") // длы решения проблемы с CORS политикой
 	w.Header().Set("Content-Type", "application/json") // установка типа отправляемого контента
 
 	id, err := strconv.Atoi(vars["id"])
@@ -40,7 +38,7 @@ func PostCustomer(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&cstmer)
 	err := addCustomer(&cstmer)
 	if err != nil {
-		w.WriteHeader(http.StatusUnprocessableEntity)
+		w.WriteHeader(http.StatusBadRequest)
 	} else {
 		w.WriteHeader(http.StatusNoContent)
 	}
