@@ -24,7 +24,6 @@ func GetCustomerById(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println(err)
 	}
-
 	Customer := getCustomersFromDbById(id)
 
 	json.NewEncoder(w).Encode(Customer) // кодирование структуры в json формат
@@ -39,6 +38,7 @@ func GetCustomers(w http.ResponseWriter, r *http.Request) {
 }
 
 func getCustomersFromDbById(id int) (Customer customer.Customer) {
+
 	db, err := sql.Open(config.DriverName, config.DbPath)
 	if err != nil {
 		log.Println("sql open error: ", err)
@@ -46,7 +46,7 @@ func getCustomersFromDbById(id int) (Customer customer.Customer) {
 
 	rows, err := db.Query("SELECT * FROM customer WHERE customerid = $1", id)
 	if err != nil {
-		log.Println("sql error: ", err)
+		log.Println("sql query error: ", err)
 	}
 
 	for rows.Next() {
@@ -67,7 +67,7 @@ func getCustomersFromDbById(id int) (Customer customer.Customer) {
 			&f.SupportRepId)
 
 		if err != nil {
-			log.Println(err)
+			log.Println("sql read error: ", err)
 		}
 
 		Customer = f
