@@ -4,8 +4,8 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"home/pkg/dbfunc"
 	"home/pkg/routers"
+	"home/pkg/sqldatabase"
 	"log"
 	"net/http"
 	"os"
@@ -18,7 +18,9 @@ func main() {
 	flag.DurationVar(&wait, "graceful-timeout", time.Second*15, "the duration for which the server gracefully wait for existing connections to finish - e.g. 15s or 1m")
 	flag.Parse()
 
-	dbfunc.CheckDbFileExist() // Проверка существует ли SQLite база данных, если не существует, то создает файл и нужные таблицы
+	if err := sqldatabase.Open(); err != nil {
+		log.Fatal(err)
+	}
 
 	server := &http.Server{
 		Addr:         "127.0.0.1:8000",
@@ -44,6 +46,8 @@ func main() {
 
 	//конструкция <- дожидается сигнала и блокирует код дальше, пока не прийдет сигнал
 	<-c
+
+	sqldatabase.Close()
 
 	ctx, cancel := context.WithTimeout(context.Background(), wait)
 

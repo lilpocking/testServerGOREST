@@ -37,8 +37,8 @@ func CheckDbFileExist() {
 		}
 
 		log.Println("SQL end creating")
-		err = db.Close()
-		if err != nil {
+
+		if err = db.Close(); err != nil {
 			log.Println(err)
 		}
 	}

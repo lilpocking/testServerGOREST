@@ -1,21 +1,14 @@
 package customer
 
 import (
-	"database/sql"
 	"fmt"
-	"home/config"
 	"home/pkg/customer"
+	"home/pkg/sqldatabase"
 	"log"
 )
 
 func getCustomersFromDbById(id int) (Customer customer.Customer) {
-
-	db, err := sql.Open(config.DriverName, config.DbPath)
-	if err != nil {
-		log.Println("sql open error: ", err)
-	}
-
-	rows, err := db.Query("SELECT * FROM customer WHERE customerid = $1", id)
+	rows, err := sqldatabase.DB.Database.Query("SELECT * FROM customer WHERE customerid = $1", id)
 	if err != nil {
 		log.Println("sql query error: ", err)
 	}
@@ -47,12 +40,7 @@ func getCustomersFromDbById(id int) (Customer customer.Customer) {
 }
 
 func getCustomersFromDb() (Customers []customer.Customer) {
-	db, err := sql.Open(config.DriverName, config.DbPath)
-	if err != nil {
-		log.Println(err)
-	}
-
-	rows, err := db.Query("SELECT * FROM customer")
+	rows, err := sqldatabase.DB.Database.Query("SELECT * FROM customer")
 	if err != nil {
 		log.Println(err)
 	}
@@ -86,12 +74,8 @@ func getCustomersFromDb() (Customers []customer.Customer) {
 }
 
 func addCustomer(cstmer *customer.Customer) error {
-	var db *sql.DB
-	db, err := sql.Open(config.DriverName, config.DbPath)
-	if err != nil {
-		log.Println("sql post error: ", err)
-	}
-	rslt, err := db.Exec(
+
+	rslt, err := sqldatabase.DB.Database.Exec(
 		"INSERT INTO customer ("+
 			"FirstName, "+
 			"LastName, "+

@@ -36,8 +36,8 @@ func GetCustomers(w http.ResponseWriter, r *http.Request) {
 func PostCustomer(w http.ResponseWriter, r *http.Request) {
 	cstmer := customer.Customer{}
 	json.NewDecoder(r.Body).Decode(&cstmer)
-	err := addCustomer(&cstmer)
-	if err != nil {
+
+	if err := addCustomer(&cstmer); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 	} else {
 		w.WriteHeader(http.StatusNoContent)
