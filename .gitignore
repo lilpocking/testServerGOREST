@@ -1,3 +1,4 @@
 Chinook.db
 */build/
 *.db
+.vscode

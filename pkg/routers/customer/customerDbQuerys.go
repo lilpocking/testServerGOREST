@@ -35,11 +35,12 @@ func getCustomersFromDbById(id int) *customer.Customer {
 	if err != nil {
 		log.Println(err)
 	}
-
+	fmt.Println(sqldatabase.ConstructPostRequest(f))
 	return &f
 }
 
-func getCustomersFromDb() (Customers []customer.Customer) {
+func getCustomersFromDb() *[]customer.Customer {
+	var Customers []customer.Customer
 	rows, err := sqldatabase.DB.Database.Query("SELECT * FROM customer")
 	if err != nil {
 		log.Println(err)
@@ -70,39 +71,12 @@ func getCustomersFromDb() (Customers []customer.Customer) {
 		Customers = append(Customers, f)
 	}
 
-	return
+	return &Customers
 }
 
 func addCustomer(cstmer *customer.Customer) error {
-
 	rslt, err := sqldatabase.DB.Database.Exec(
-		"INSERT INTO customer ("+
-			"FirstName, "+
-			"LastName, "+
-			"Company, "+
-			"Address, "+
-			"City, "+
-			"State, "+
-			"Country, "+
-			"PostalCode, "+
-			"Phone, "+
-			"Fax, "+
-			"Email, "+
-			"SupportRepId"+
-			") VALUES ("+
-			"$1, "+
-			"$2, "+
-			"$3, "+
-			"$4, "+
-			"$5, "+
-			"$6, "+
-			"$7, "+
-			"$8, "+
-			"$9, "+
-			"$10, "+
-			"$11, "+
-			"$12"+
-			");",
+		sqldatabase.ConstructPostRequest(*cstmer),
 		cstmer.FirstName,
 		cstmer.LastName,
 		cstmer.Company,
