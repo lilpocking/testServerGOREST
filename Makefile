@@ -1,15 +1,35 @@
+# start makefile in silent mode
 .SILENT:
 
-REST=cmd/app/main.go
-BUILDFOLDER=./cmd/build
+MAINGOFILE=cmd/app/main.go
+BUILD=./cmd/build/app
 
-#
+# parametrs for build
+BUILD_CGO_PARAM=1
+
+#BUILD_OS
+#windows
+#linux
+#darwin (for macOS systems)
+BUILD_OS=windows
+
+#BUILD_ARCH
+# 32-bit systems
+#386 
+# 64-bit systems
+#amd64
+#arm64
+BUILD_ARCH=amd64
+
 run:
-	go run $(REST)
+	go run $(MAINGOFILE)
 
-# build program and move it in build directory
 build:
-	go build cmd/app/main.go && move main.exe $(BUILDFOLDER)
+	go mod download && go build -o $(BUILD).exe $(MAINGOFILE)
 
-buildAndRun: build
-	cd $(BUILDFOLDER) && start main.exe
+buildWithParam:
+	go mod download && CGO_ENABLED=$(BUILD_CGO_PARAM) GOOS=$(BUILD_OS) GOARCH=$(BUILD_ARCH) go build -o $(BUILD)-$(BUILD_OS)-$(BUILD_ARCH).exe $(MAINGOFILE)
+
+# perform start comand
+runApp:
+	start $(BUILD)
