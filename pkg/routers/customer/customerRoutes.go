@@ -20,9 +20,9 @@ func GetCustomerById(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println(err)
 	}
-	Customer := getCustomersFromDbById(id)
 
-	json.NewEncoder(w).Encode(Customer) // кодирование структуры в json формат
+	CustomerCh := getCustomersFromDbById(id)
+	json.NewEncoder(w).Encode(CustomerCh) // кодирование структуры в json формат
 }
 
 func GetCustomers(w http.ResponseWriter, r *http.Request) {

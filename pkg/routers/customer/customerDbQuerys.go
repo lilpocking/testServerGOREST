@@ -7,36 +7,36 @@ import (
 	"log"
 )
 
-func getCustomersFromDbById(id int) (Customer customer.Customer) {
+func getCustomersFromDbById(id int) *customer.Customer {
 	rows, err := sqldatabase.DB.Database.Query("SELECT * FROM customer WHERE customerid = $1", id)
 	if err != nil {
 		log.Println("sql query error: ", err)
+		return nil
+	}
+	defer rows.Close()
+
+	rows.Next()
+	f := customer.Customer{}
+	err = rows.Scan(
+		&f.Id,
+		&f.FirstName,
+		&f.LastName,
+		&f.Company,
+		&f.Address,
+		&f.City,
+		&f.State,
+		&f.Country,
+		&f.PostalCode,
+		&f.Phone,
+		&f.Fax,
+		&f.Email,
+		&f.SupportRepId)
+
+	if err != nil {
+		log.Println(err)
 	}
 
-	for rows.Next() {
-		f := customer.Customer{}
-		err = rows.Scan(
-			&f.Id,
-			&f.FirstName,
-			&f.LastName,
-			&f.Company,
-			&f.Address,
-			&f.City,
-			&f.State,
-			&f.Country,
-			&f.PostalCode,
-			&f.Phone,
-			&f.Fax,
-			&f.Email,
-			&f.SupportRepId)
-
-		if err != nil {
-			log.Println("sql read error: ", err)
-		}
-
-		Customer = f
-	}
-	return
+	return &f
 }
 
 func getCustomersFromDb() (Customers []customer.Customer) {
