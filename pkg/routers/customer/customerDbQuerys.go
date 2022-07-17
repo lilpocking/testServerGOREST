@@ -3,6 +3,7 @@ package customer
 import (
 	"fmt"
 	"home/pkg/customer"
+	"home/pkg/dboprtns"
 	"home/pkg/sqldatabase"
 	"log"
 )
@@ -17,6 +18,7 @@ func getCustomersFromDbById(id int) *customer.Customer {
 
 	rows.Next()
 	f := customer.Customer{}
+
 	err = rows.Scan(
 		&f.Id,
 		&f.FirstName,
@@ -35,7 +37,7 @@ func getCustomersFromDbById(id int) *customer.Customer {
 	if err != nil {
 		log.Println(err)
 	}
-	fmt.Println(sqldatabase.ConstructPostRequest(f))
+	//fmt.Println(sqldatabase.ConstructPostRequest(f))
 	return &f
 }
 
@@ -76,7 +78,7 @@ func getCustomersFromDb() *[]customer.Customer {
 
 func addCustomer(cstmer *customer.Customer) error {
 	rslt, err := sqldatabase.DB.Database.Exec(
-		sqldatabase.ConstructPostRequest(*cstmer),
+		dboprtns.ConstructPostRequest(*cstmer),
 		cstmer.FirstName,
 		cstmer.LastName,
 		cstmer.Company,

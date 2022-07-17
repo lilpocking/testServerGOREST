@@ -1,10 +1,12 @@
-package dbfunc
+package dboprtns
 
 import (
 	"database/sql"
 	"home/config"
 	"log"
 	"os"
+	"reflect"
+	"strconv"
 )
 
 func CheckDbFileExist() {
@@ -42,4 +44,39 @@ func CheckDbFileExist() {
 			log.Println(err)
 		}
 	}
+}
+
+
+
+func ConstructPostRequest(object interface{}) string {
+	exQueryMessage := "INSERT INTO customer ("
+	t := reflect.TypeOf(object)
+
+	for i := 0; i < t.NumField(); i++ {
+		field := t.Field(i)
+
+		if field.Name == "Id" {
+			continue
+		}
+
+		if i >= t.NumField()-1 {
+			exQueryMessage += field.Name + ") VALUES ("
+			break
+		}
+		exQueryMessage += field.Name + ", "
+	}
+
+	for i := 0; i < t.NumField(); i++ {
+		field := t.Field(i)
+		if field.Name == "Id" {
+			continue
+		}
+		if i >= t.NumField()-1 {
+			exQueryMessage += "$" + strconv.Itoa(i+1) + ");"
+			break
+		}
+		exQueryMessage += "$" + strconv.Itoa(i+1) + ", "
+	}
+
+	return exQueryMessage
 }
